@@ -20,7 +20,7 @@ pip install pushbullet.py
 ```
 ### Usage
 ```
-usage: notify_pushbullet.py [-h] AccessToken(|DeviceName) Subject Message
+usage: notify_pushbullet.py [-h] "AccessToken(|DeviceName)" "Subject Message"
 
 Send Zabbix notification to Pushbullet enabled devices.
 
@@ -71,7 +71,7 @@ pip install python-pushover
 ```
 ### Usage
 ```
-usage: notify_pushover.py [-h] UserKey|AppToken Subject Message
+usage: notify_pushover.py [-h] "UserKey|AppToken" "Subject Message"
 
 Send Zabbix notification to Pushover enabled devices.
 
