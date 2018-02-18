@@ -4,7 +4,7 @@
 # Pushover notification script for Zabbix
 # 
 # Author:
-#   Sébastien RICCIO - sr@swisscenter.com
+#   SÃ©bastien RICCIO - sr@swisscenter.com
 #
 # Purpose:
 #   Push zabbix notifications to Pushover enabled devices
@@ -75,23 +75,28 @@ def rlb(thing):
 
 # Arguments parser
 parser = argparse.ArgumentParser(description='Send Zabbix notification to Pushover enabled devices.')
-parser.add_argument('user_key_app_token', metavar=('UserKey|AppToken'), type=str, help='Pushover User Key AND Application Token separated by |')
-parser.add_argument('subject', metavar=('Subject'), type=str, help='Subject you want to push to the device(s).')
-parser.add_argument('message', metavar=('Message'), type=str, help='Message you want to push to the device(s).')
+parser.add_argument('apptoken', metavar=('AppToken'), type=str, help='Pushover Application Token')
+parser.add_argument('userkey', metavar=('UserKey'), type=str, help='Pushover User Key')
+parser.add_argument('subject', metavar=('Subject'), type=str, help='Subject you want to push to the device(s)')
+parser.add_argument('message', metavar=('Message'), type=str, help='Message you want to push to the device(s)')
 
 # Argument processing
 args = parser.parse_args()
-user_key_app_token = args.user_key_app_token
+user_key = args.userkey
+app_token = args.apptoken
 subject = args.subject
 message = args.message
 
-# Check if UserKey and AppToken has been supplied
-if "|" in user_key_app_token:
-  user_key, app_token = user_key_app_token.split("|")
-else:
-  l("Error: you must supply both User Key and App Token separated with |")
+#Check if AppToken has been supplied
+if not app_token:
+  l("Error: you must supply an App Token")
   sys.exit(1)
-  
+
+# Check if UserKey and AppToken has been supplied
+if not app_token:
+  l("Error: you must supply a User Key")
+sys.exit(1)
+
 # Try to login with AcessToken
 try:
     po = pushover.Client(user_key, api_token=app_token)
