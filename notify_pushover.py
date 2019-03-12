@@ -76,7 +76,6 @@ except (pushover.UserError) as exc:
 # Try to send the notification
 try:
     po.send_message(message, title=subject)
-    logMsg("Pushover to user_key %s has been sent with sunject %s" % (user_key,subject))
 except (pushover.RequestError) as exc:
     logMsg("Error: Can't send notification to Pushover devices: %s" % str(exc), syslog.LOG_ERR)
     sys.exit(1)
