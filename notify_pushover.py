@@ -21,53 +21,28 @@ import argparse
 import sys
 import time
 import pushover
+import syslog
 
 #
 # Settings
 #
 ENABLE_LOG = True
-LOG_FILE = "/var/log/zabbix/notify_pushover.log"
-
+LOG_FACILITY = syslog.LOG_LOCAL5
+LOG_IDENT = "pushover" 
 
 #
 # Functions
 #
-def l(msg):
-    """
-    Send log line to stdout and to LOG_FILE if logging is enabled
-    """
-    msg = "[%s] %s" % (logTimeStamp(), msg)
-
-    # Print to stdout
-    print(msg)
-
-    # Output to logfile
+logConnected=False
+def logMsg(msg,level=syslog.LOG_INFO):
+    global LOG_FACILITY,LOG_IDENT,logConnected
     if ENABLE_LOG:
-        try:
-            lf = open(LOG_FILE, 'a')
-            lf.write("%s\n" % (msg))
-
-        except (OSError) as exc:
-            print("Error while trying to log event: %s" % rlb(str(exc)))
-            return False
-        
-        lf.close()    
-
+        if not logConnected:
+            syslog.openlog(LOG_IDENT, syslog.LOG_PID, LOG_FACILITY)
+            logConnected=True
+        print("LOG: %s" % msg)
+        return syslog.syslog(level,msg)
     return True
-
-
-def logTimeStamp():
-    """
-    Return current date/time formatted for log output
-    """
-    return  time.strftime('%a %b %d %H:%M:%S %Y')
-
-
-def rlb(thing):
-  """
-  Return thing with line breaks replaced by spaces
-  """
-  return thing.replace("\r", " ").replace("\n", " ")
 
 #
 # Main code
@@ -89,23 +64,25 @@ message = args.message
 if "|" in user_key_app_token:
   user_key, app_token = user_key_app_token.split("|")
 else:
-  l("Error: you must supply both User Key and App Token separated with |")
+  logMsg("Error: you must supply both User Key and App Token separated with |",syslog.LOG_ERR)
   sys.exit(1)
   
 # Try to login with AcessToken
 try:
     po = pushover.Client(user_key, api_token=app_token)
 except (pushover.UserError) as exc:
-    l("Error: Can't connect to Pushover with User Key [%s]." % user_key)
+    logMsg("Error: Can't connect to Pushover with User Key [%s]." % user_key, syslog.LOG_ERR)
     sys.exit(1)
 
 # Try to send the notification
 try:
     po.send_message(message, title=subject)
+    logMsg("Pushover to user_key %s has been sent with sunject %s" % (user_key,subject))
 except (pushover.RequestError) as exc:
-    l("Error: Can't send notification to Pushover devices: %s" % rlb(str(exc)))
+    logMsg("Error: Can't send notification to Pushover devices: %s" % str(exc), syslog.LOG_ERR)
     sys.exit(1)
 
 # Exit with success
-l("Success: Message sent with UserKey [%s] to AppToken [%s]" % (user_key, app_token))
+logMsg("Success: Message sent with UserKey [%s] with Subject [%s]" % (user_key, subject))
 sys.exit(0)
+
