@@ -40,7 +40,6 @@ def logMsg(msg,level=syslog.LOG_INFO):
         if not logConnected:
             syslog.openlog(LOG_IDENT, syslog.LOG_PID, LOG_FACILITY)
             logConnected=True
-        print("LOG: %s" % msg)
         return syslog.syslog(level,msg)
     return True
 
@@ -83,6 +82,6 @@ except (pushover.RequestError) as exc:
     sys.exit(1)
 
 # Exit with success
-logMsg("Success: Message sent with UserKey [%s] with Subject [%s]" % (user_key, subject))
+logMsg("'%s' [%s] %s" % (user_key, subject, message))
 sys.exit(0)
 
