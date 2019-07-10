@@ -93,7 +93,7 @@ if not app_token:
   sys.exit(1)
 
 # Check if UserKey and AppToken has been supplied
-if not app_token:
+if not user_key:
   l("Error: you must supply a User Key")
 sys.exit(1)
 
