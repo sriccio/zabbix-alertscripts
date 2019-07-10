@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Pushover notification script for Zabbix
-# 
+#
 # Author:
 #   Sébastien RICCIO - sr@swisscenter.com
 #
@@ -50,8 +50,8 @@ def l(msg):
         except (OSError) as exc:
             print("Error while trying to log event: %s" % rlb(str(exc)))
             return False
-        
-        lf.close()    
+
+        lf.close()
 
     return True
 
@@ -60,14 +60,15 @@ def logTimeStamp():
     """
     Return current date/time formatted for log output
     """
-    return  time.strftime('%a %b %d %H:%M:%S %Y')
+    return time.strftime('%a %b %d %H:%M:%S %Y')
 
 
 def rlb(thing):
-  """
-  Return thing with line breaks replaced by spaces
-  """
-  return thing.replace("\r", " ").replace("\n", " ")
+    """
+    Return thing with line breaks replaced by spaces
+    """
+    return thing.replace("\r", " ").replace("\n", " ")
+
 
 #
 # Main code
@@ -75,27 +76,32 @@ def rlb(thing):
 
 # Arguments parser
 parser = argparse.ArgumentParser(description='Send Zabbix notification to Pushover enabled devices.')
-parser.add_argument('apptoken', metavar=('AppToken'), type=str, help='Pushover Application Token')
-parser.add_argument('userkey', metavar=('UserKey'), type=str, help='Pushover User Key')
+parser.add_argument('apikey', metavar=('ApiKey'), type=str, help='userkey|apptoken')
 parser.add_argument('subject', metavar=('Subject'), type=str, help='Subject you want to push to the device(s)')
 parser.add_argument('message', metavar=('Message'), type=str, help='Message you want to push to the device(s)')
 
 # Argument processing
 args = parser.parse_args()
-user_key = args.userkey
-app_token = args.apptoken
+api_key = args.apikey
 subject = args.subject
 message = args.message
 
-#Check if AppToken has been supplied
-if not app_token:
-  l("Error: you must supply an App Token")
-  sys.exit(1)
 
 # Check if UserKey and AppToken has been supplied
-if not app_token:
-  l("Error: you must supply a User Key")
-sys.exit(1)
+if not api_key:
+    l("Error: you must supply a UserKey|AppToken")
+    sys.exit(1)
+
+api_keys = api_key.split("|")
+
+if len(api_keys) != 2:
+    l("Error: Missing user key or app key")
+    sys.exit(1)
+
+user_key = api_keys[0]
+app_token = api_keys[1]
+
+
 
 # Try to login with AcessToken
 try:
