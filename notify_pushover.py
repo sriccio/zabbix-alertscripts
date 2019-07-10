@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Pushover notification script for Zabbix
-# 
+#
 # Author:
 #   Sébastien RICCIO - sr@swisscenter.com
 #
@@ -50,8 +50,8 @@ def l(msg):
         except (OSError) as exc:
             print("Error while trying to log event: %s" % rlb(str(exc)))
             return False
-        
-        lf.close()    
+
+        lf.close()
 
     return True
 
@@ -60,14 +60,15 @@ def logTimeStamp():
     """
     Return current date/time formatted for log output
     """
-    return  time.strftime('%a %b %d %H:%M:%S %Y')
+    return time.strftime('%a %b %d %H:%M:%S %Y')
 
 
 def rlb(thing):
-  """
-  Return thing with line breaks replaced by spaces
-  """
-  return thing.replace("\r", " ").replace("\n", " ")
+    """
+    Return thing with line breaks replaced by spaces
+    """
+    return thing.replace("\r", " ").replace("\n", " ")
+
 
 #
 # Main code
@@ -87,15 +88,16 @@ app_token = args.apptoken
 subject = args.subject
 message = args.message
 
-#Check if AppToken has been supplied
+# Check if AppToken has been supplied
 if not app_token:
-  l("Error: you must supply an App Token")
-  sys.exit(1)
+    l("Error: you must supply an App Token")
+    sys.exit(1)
 
 # Check if UserKey and AppToken has been supplied
 if not user_key:
-  l("Error: you must supply a User Key")
-sys.exit(1)
+    l("Error: you must supply a User Key")
+    sys.exit(1)
+
 
 # Try to login with AcessToken
 try:
